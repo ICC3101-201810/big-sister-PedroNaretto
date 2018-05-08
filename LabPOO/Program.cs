@@ -4,18 +4,45 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace LabPOO
 {
     class Program
     {
+
+        public delegate List<Product> BigSister(object sender, Product producto);
         public static List<Product> cart;
         public static List<Product> market;
 
+
         static void Main(string[] args)
         {
+
             cart = new List<Product>();
+
+            try
+            {
+                using (Stream stream = File.Open("data.bin", FileMode.Open))
+                {
+                    BinaryFormatter bin = new BinaryFormatter();
+
+                    cart = (List<Product>)bin.Deserialize(stream);
+
+                }
+            }
+            catch (IOException)
+            {
+            }
+
             market = new List<Product>();
+            List<string> receta = new List<string> { };
+            receta = DarReceta(receta);
+
+            //var meter = new BigSister(
+            //meter.SacarDelCarro
+
             SupplyStore();
             while (true)
             {
@@ -51,6 +78,23 @@ namespace LabPOO
                     }
                     else if (answer == "5")
                     {
+                        if (cart.Count() == 0)
+                        { }
+                        else
+                        {
+                            try
+                            {
+                                using (Stream stream = File.Open("data.bin", FileMode.Create))
+                                {
+                                    BinaryFormatter bin = new BinaryFormatter();
+                                    bin.Serialize(stream, cart);
+                                }
+                            }
+                            catch (IOException)
+                            {
+                            }
+                        }
+
                         Environment.Exit(1);
                     }
                 }
@@ -190,6 +234,22 @@ namespace LabPOO
             {
                 response = Console.ReadKey(true);
             }
+        }
+        public static List<string> DarReceta(List<string> receta)
+        {
+            receta.Add("Láminas de Lasaña");
+            receta.Add("Queso Parmesano");
+            receta.Add("Mantequilla");
+            receta.Add("Carne Molida");
+            receta.Add("Vino Blanco Caja");
+            receta.Add("Tomates Pelados en lata");
+            receta.Add("Bolsa de Zanahorias");
+            receta.Add("Malla de Cebollas");
+            receta.Add("Aceite de Oliva");
+            receta.Add("Pimienta");
+            receta.Add("Harina");
+            receta.Add("Leche Entera");
+            return receta;
         }
     }
 }
